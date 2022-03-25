@@ -22,17 +22,17 @@ export class Position {
         }
     }
 
-    constructor(x: number, y: number, directionText: string) {
+    constructor(x: number, y: number, directionText: Direction) {
         this.coordinate = new Coordinate(x, y);
-        this.direction = this.parseDirection(directionText);
+        this.direction = directionText;
     }
 
     turnLeft(): Position {
-        return new Position(this.coordinate.x, this.coordinate.y, this.direction.turnLeft().toString())
+        return new Position(this.coordinate.x, this.coordinate.y, this.direction.turnLeft())
     }
 
     turnRight(): Position {
-        return new Position(this.coordinate.x, this.coordinate.y, this.direction.turnRight().toString())
+        return new Position(this.coordinate.x, this.coordinate.y, this.direction.turnRight())
     }
 
     moveForward() {
@@ -47,7 +47,7 @@ export class Position {
         } else if (s === "WEST") {
             coordinate = this.coordinate.moveWest();
         }
-        return new Position(coordinate.x, coordinate.y, this.direction.toString());
+        return new Position(coordinate.x, coordinate.y, this.direction);
     }
 
     toString(): string {
