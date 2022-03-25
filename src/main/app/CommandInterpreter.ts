@@ -18,17 +18,21 @@ export class CommandInterpreter {
 
     translate(commands: string): Array<ICommand> {
         let allCommands = new Array<ICommand>();
-        allCommands.push(this.getInitializationCommand(commands));
-        allCommands.push(this.getStartingPositionCommand(commands));
-        allCommands.push(...this.getMovementCommands(commands));
+        let [size, starting, movements] = this.parseCommands(commands);
+        allCommands.push(this.getInitializationCommand(size));
+        allCommands.push(this.getStartingPositionCommand(starting));
+        allCommands.push(...this.getMovementCommands(movements));
 
         return allCommands;
     }
 
+    private parseCommands(commands: string): string[] {
+        return commands.split("\n");
+    }
+
     private getMovementCommands(commands: string): ICommand[] {
         let movementCommands = new Array<ICommand>();
-        let lines: string[] = commands.split("\n");
-        for (let command of Array.from(lines[2])) {
+        for (let command of Array.from(commands)) {
             switch (command) {
                 case 'L':
                     movementCommands.push(new TurnLeftCommand());
@@ -45,17 +49,14 @@ export class CommandInterpreter {
     }
 
     private getInitializationCommand(commands: string): InitializationCommand {
-        let lines: string[] = commands.split("\n");
-        let topRight: string[] = lines[0].split(" ");
-        return new InitializationCommand(new Coordinate(parseInt(topRight[0]), parseInt(topRight[1])));
+        let [width, height] = commands.split(" ");
+        return new InitializationCommand(new Coordinate(parseInt(width), parseInt(height)));
     }
 
     private getStartingPositionCommand(commands: string): StartingPositionCommand {
-        let lines: string[] = commands.split("\n");
-        let coords: string[] = lines[1].split(" ");
-
-        let coordinate: Coordinate = new Coordinate(parseInt(coords[0]), parseInt(coords[1]));
-        let direction: Direction = <Direction>this.letterToDirection.get(coords[2]);
+        let [startX, startY, startDirection] = commands.split(" ");
+        let coordinate: Coordinate = new Coordinate(parseInt(startX), parseInt(startY));
+        let direction: Direction = <Direction>this.letterToDirection.get(startDirection);
         let position: Position = new Position(coordinate.x, coordinate.y, direction.toString());
         return new StartingPositionCommand(position);
     }
